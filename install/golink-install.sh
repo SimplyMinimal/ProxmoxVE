@@ -22,9 +22,10 @@ msg_ok "Installed Dependencies"
 setup_go
 
 # To update: change the version below to a newer tag
-RELEASE="v1.0.0"
+# Note: tailscale/golink has tags but no formal GitHub releases
+RELEASE="1.0.0"
 
-fetch_and_deploy_gh_release "golink" "tailscale/golink"
+fetch_and_deploy_gh_release "golink" "tailscale/golink" "tarball" "${RELEASE}" "/opt/golink"
 
 msg_info "Building Golink"
 cd /opt/golink || exit
@@ -40,7 +41,7 @@ chmod +x golink
 # Clean up build artifacts
 $STD go clean -cache
 
-echo "${RELEASE}" >"/opt/${APPLICATION}_version.txt"
+echo "v${RELEASE}" >"/opt/${APPLICATION}_version.txt"
 msg_ok "Built Golink"
 
 msg_info "Configuring Golink"
