@@ -24,7 +24,7 @@ setup_go
 # To update: change the version below to a newer tag
 RELEASE="v1.0.0"
 
-fetch_and_deploy_gh_release "golink" "tailscale/golink" "tarball" "${RELEASE}" "/opt/golink"
+fetch_and_deploy_gh_release "golink" "tailscale/golink"
 
 msg_info "Building Golink"
 cd /opt/golink || exit
