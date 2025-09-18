@@ -29,8 +29,17 @@ msg_ok "Cloned Golink Repository"
 msg_info "Building Golink"
 cd /opt/golink || exit
 $STD go mod tidy
-$STD go build -o golink ./cmd/golink
+
+# Clean Go cache before building to save space
+$STD go clean -cache -modcache
+
+# Build with optimizations to reduce space usage
+$STD go build -ldflags="-s -w" -o golink ./cmd/golink
 chmod +x golink
+
+# Clean up build artifacts
+$STD go clean -cache
+
 RELEASE=$(git describe --tags --always 2>/dev/null || echo "main-$(git rev-parse --short HEAD)")
 echo "${RELEASE}" >"/opt/${APPLICATION}_version.txt"
 msg_ok "Built Golink"
