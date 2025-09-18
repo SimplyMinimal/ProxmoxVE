@@ -22,9 +22,7 @@ msg_ok "Installed Dependencies"
 
 setup_go
 
-msg_info "Cloning Golink Repository"
-$STD git clone https://github.com/tailscale/golink.git /opt/golink
-msg_ok "Cloned Golink Repository"
+fetch_and_deploy_gh_release "golink" "tailscale/golink" "tarball" "v1.0.0" "/opt/golink"
 
 msg_info "Building Golink"
 cd /opt/golink || exit
@@ -40,7 +38,7 @@ chmod +x golink
 # Clean up build artifacts
 $STD go clean -cache
 
-RELEASE=$(git describe --tags --always 2>/dev/null || echo "main-$(git rev-parse --short HEAD)")
+RELEASE="v1.0.0"
 echo "${RELEASE}" >"/opt/${APPLICATION}_version.txt"
 msg_ok "Built Golink"
 
