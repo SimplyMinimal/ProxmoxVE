@@ -15,29 +15,16 @@ update_os
 
 msg_info "Installing Dependencies"
 $STD apt-get install -y \
-  git \
   ca-certificates \
   sqlite3
 msg_ok "Installed Dependencies"
 
 setup_go
 
-# SPECIAL CASE: tailscale/golink has tags but no formal GitHub releases
-# fetch_and_deploy_gh_release only works with repositories that have formal releases
-# tailscale/golink only has tags (v1.0.0 tag exists but no v1.0.0 release)
-#
-# API endpoints:
-# - https://api.github.com/repos/tailscale/golink/releases (returns [])
-# - https://api.github.com/repos/tailscale/golink/releases/tags/v1.0.0 (returns 404)
-# - https://api.github.com/repos/tailscale/golink/tags (returns v1.0.0 tag)
-#
-# Solution: Use direct tarball download from tags API (same as fetch_and_deploy_gh_release tarball mode)
-msg_info "Downloading Golink v1.0.0 (tag-based)"
-mkdir -p /opt/golink
-cd /opt/golink || exit
-# Download v1.0.0 tag tarball - equivalent to fetch_and_deploy_gh_release tarball mode
-$STD curl -fsSL https://api.github.com/repos/tailscale/golink/tarball/v1.0.0 | tar -xz --strip-components=1
-msg_ok "Downloaded Golink v1.0.0"
+# To update: change the version below to a newer tag
+RELEASE="v1.0.0"
+
+fetch_and_deploy_gh_release "golink" "tailscale/golink" "tarball" "${RELEASE}" "/opt/golink"
 
 msg_info "Building Golink"
 cd /opt/golink || exit
@@ -53,7 +40,6 @@ chmod +x golink
 # Clean up build artifacts
 $STD go clean -cache
 
-RELEASE="v1.0.0"
 echo "${RELEASE}" >"/opt/${APPLICATION}_version.txt"
 msg_ok "Built Golink"
 
